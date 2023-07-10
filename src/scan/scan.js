@@ -38,6 +38,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var web3_1 = require("web3");
 var fs = require("fs");
+var test_service_1 = require("../test/test.service");
+var client_1 = require("@prisma/client");
+var prisma_service_1 = require("../prisma.service");
 var web3 = new web3_1.default('http://localhost:7545'); // 连接到ganache节点
 var abiData = fs.readFileSync('./src/scan/MyToken.json');
 var data = JSON.parse(abiData); // 合约的ABI
@@ -45,27 +48,26 @@ var abi = data.abi;
 // console.log(abi);
 var contractAddress = '0xe57B9d075d6de3edf24eE361207613004867b965'; // 合约地址
 var myContract = new web3.eth.Contract(abi, contractAddress);
-function getBlockInfo(startBlock, endBlock) {
+function getBlockInfo(startBlock, endBlock, testService) {
     return __awaiter(this, void 0, void 0, function () {
-        var blockNumber, block, _i, _a, tx, txHash, tradeTime, receipt, transferEvents, _b, _c, event_1;
+        var blockNumber, block, _i, _a, tx, txHash, tradeTime, receipt, transferEvents, _b, _c, event_1, createTestDto;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
                     blockNumber = startBlock;
                     _d.label = 1;
                 case 1:
-                    if (!(blockNumber <= endBlock)) return [3 /*break*/, 8];
+                    if (!(blockNumber <= endBlock)) return [3 /*break*/, 11];
                     return [4 /*yield*/, web3.eth.getBlock(blockNumber, true)];
                 case 2:
                     block = _d.sent();
                     _i = 0, _a = block.transactions;
                     _d.label = 3;
                 case 3:
-                    if (!(_i < _a.length)) return [3 /*break*/, 7];
+                    if (!(_i < _a.length)) return [3 /*break*/, 10];
                     tx = _a[_i];
                     txHash = tx.hash;
                     tradeTime = new Date(Number(block.timestamp) * 1000);
-                    console.log("Transaction hash: ".concat(txHash, ", trade time: ").concat(tradeTime));
                     return [4 /*yield*/, web3.eth.getTransactionReceipt(tx === null || tx === void 0 ? void 0 : tx.hash)];
                 case 4:
                     receipt = _d.sent();
@@ -75,20 +77,39 @@ function getBlockInfo(startBlock, endBlock) {
                         })];
                 case 5:
                     transferEvents = _d.sent();
-                    for (_b = 0, _c = transferEvents; _b < _c.length; _b++) {
-                        event_1 = _c[_b];
-                        console.log("Transfer from ".concat(event_1.returnValues.from, " to ").concat(event_1.returnValues.to, " with value ").concat(event_1.returnValues.value));
-                    }
+                    _b = 0, _c = transferEvents;
                     _d.label = 6;
                 case 6:
+                    if (!(_b < _c.length)) return [3 /*break*/, 9];
+                    event_1 = _c[_b];
+                    createTestDto = {
+                        transactionHash: txHash,
+                        tradeTime: tradeTime.toISOString(),
+                        TransferFrom: event_1.returnValues.from,
+                        TransferTo: event_1.returnValues.to,
+                        TransferValue: event_1.returnValues.value.toString(),
+                    };
+                    //   console.log(createTestDto);
+                    return [4 /*yield*/, testService.create(createTestDto)];
+                case 7:
+                    //   console.log(createTestDto);
+                    _d.sent();
+                    _d.label = 8;
+                case 8:
+                    _b++;
+                    return [3 /*break*/, 6];
+                case 9:
                     _i++;
                     return [3 /*break*/, 3];
-                case 7:
+                case 10:
                     blockNumber++;
                     return [3 /*break*/, 1];
-                case 8: return [2 /*return*/];
+                case 11: return [2 /*return*/];
             }
         });
     });
 }
-getBlockInfo(1, 10);
+var prisma = new client_1.PrismaClient(); // 创建 PrismaClient 实例
+var prismaService = new prisma_service_1.PrismaService(prisma); // 创建 PrismaService 实例
+var testService = new test_service_1.TestService(prismaService); // 将 PrismaService 实例传递给 TestService 构造函数
+getBlockInfo(1, 10, testService);

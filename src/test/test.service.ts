@@ -7,7 +7,7 @@ import { CreateTestDto } from './test.dto';
 export class TestService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createTestDto: CreateTestDto) {
+  public async create(createTestDto: CreateTestDto) {
     return this.prisma.prismaClient.test.create({ data: createTestDto });
   }
 

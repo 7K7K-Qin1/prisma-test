@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
+}
+model Did {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  domain    String @unique
+  // 域名 name
+  owner     String @unique
+  // 所有者 owner address
+  txHash    String?
+  // 交易号 txHash
+  tradeTime DateTime?
+  // 交易时间戳 tradeTime
+  expirationDate DateTime?
+  // did的过期时间 expiresTime
+  createdAt DateTime @default(now())
+  // 该数据创建时间 createdAt
+  updatedAt DateTime @updatedAt
+  // 该数据的更新时间 updatedAt
+}
+model test{
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    transactionHash String
+    tradeTime String
+    TransferFrom String?
+    TransferTo String?
+    TransferValue String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+

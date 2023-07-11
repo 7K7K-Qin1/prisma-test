@@ -5,12 +5,11 @@ import { TestService } from '../test/test.service';
 import { PrismaClient } from '@prisma/client'
 import { PrismaService } from '../prisma.service';
 
-  const web3 = new Web3('http://localhost:7545'); // 连接到ganache节点
+  const web3 = new Web3(process.env.WEB3_PROVIDER_URL);
   const abiData:any = fs.readFileSync('./src/scan/MyToken.json');
   const data = JSON.parse(abiData); // 合约的ABI
   const abi = data.abi;
-  // console.log(abi);
-  const contractAddress = '0xe57B9d075d6de3edf24eE361207613004867b965'; // 合约地址
+  const contractAddress = process.env.MY_TOKEN_ADDRESS;
   const myContract = new web3.eth.Contract(abi, contractAddress);
   
   async function getBlockInfo(startBlock: number, endBlock: number, testService: TestService) {
@@ -32,8 +31,8 @@ import { PrismaService } from '../prisma.service';
             TransferTo: event.returnValues.to,
             TransferValue: event.returnValues.value.toString(),
           };
-          console.log(createTestDto);
-          // await testService.create(createTestDto);
+          // console.log(`block${a}:`,createTestDto);
+          await testService.create(createTestDto);
         }
       }
     }

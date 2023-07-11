@@ -49,61 +49,57 @@ var contractAddress = process.env.MY_TOKEN_ADDRESS;
 var myContract = new web3.eth.Contract(abi, contractAddress);
 function getBlockInfo(startBlock, endBlock, testService) {
     return __awaiter(this, void 0, void 0, function () {
-        var blockNumber, block, _i, _a, tx, txHash, tradeTime, receipt, transferEvents, _b, _c, event_1, createTestDto;
+        var a, blockNumber, block, tradeTime, transferEvents, _i, _a, event_1, createTestDto, _b, _c, tx, txHash, createTestDto;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
+                    a = 0;
                     blockNumber = startBlock;
                     _d.label = 1;
                 case 1:
-                    if (!(blockNumber <= endBlock)) return [3 /*break*/, 11];
+                    if (!(blockNumber <= endBlock)) return [3 /*break*/, 5];
+                    a++;
                     return [4 /*yield*/, web3.eth.getBlock(blockNumber, true)];
                 case 2:
                     block = _d.sent();
-                    _i = 0, _a = block.transactions;
-                    _d.label = 3;
-                case 3:
-                    if (!(_i < _a.length)) return [3 /*break*/, 10];
-                    tx = _a[_i];
-                    txHash = tx.hash;
                     tradeTime = new Date(Number(block.timestamp) * 1000);
-                    return [4 /*yield*/, web3.eth.getTransactionReceipt(tx === null || tx === void 0 ? void 0 : tx.hash)];
-                case 4:
-                    receipt = _d.sent();
                     return [4 /*yield*/, myContract.getPastEvents('Transfer', {
                             fromBlock: blockNumber,
                             toBlock: blockNumber,
                         })];
-                case 5:
+                case 3:
                     transferEvents = _d.sent();
-                    _b = 0, _c = transferEvents;
-                    _d.label = 6;
-                case 6:
-                    if (!(_b < _c.length)) return [3 /*break*/, 9];
-                    event_1 = _c[_b];
-                    createTestDto = {
-                        transactionHash: txHash,
-                        tradeTime: tradeTime.toISOString(),
-                        TransferFrom: event_1.returnValues.from,
-                        TransferTo: event_1.returnValues.to,
-                        TransferValue: event_1.returnValues.value.toString(),
-                    };
-                    // console.log(`block${a}:`,createTestDto);
-                    return [4 /*yield*/, testService.create(createTestDto)];
-                case 7:
-                    // console.log(`block${a}:`,createTestDto);
-                    _d.sent();
-                    _d.label = 8;
-                case 8:
-                    _b++;
-                    return [3 /*break*/, 6];
-                case 9:
-                    _i++;
-                    return [3 /*break*/, 3];
-                case 10:
+                    if (transferEvents.length > 0) {
+                        for (_i = 0, _a = transferEvents; _i < _a.length; _i++) {
+                            event_1 = _a[_i];
+                            createTestDto = {
+                                transactionHash: event_1.transactionHash,
+                                tradeTime: tradeTime.toISOString(),
+                                TransferFrom: event_1.returnValues.from,
+                                TransferTo: event_1.returnValues.to,
+                                TransferValue: event_1.returnValues.value.toString(),
+                            };
+                            console.log("block".concat(a, ":"), createTestDto);
+                            // await testService.create(createTestDto);
+                        }
+                    }
+                    else {
+                        for (_b = 0, _c = block.transactions; _b < _c.length; _b++) {
+                            tx = _c[_b];
+                            txHash = tx.hash;
+                            createTestDto = {
+                                transactionHash: txHash,
+                                tradeTime: tradeTime.toISOString(),
+                            };
+                            console.log("block".concat(a, ":"), createTestDto);
+                            // await testService.create(createTestDto);
+                        }
+                    }
+                    _d.label = 4;
+                case 4:
                     blockNumber++;
                     return [3 /*break*/, 1];
-                case 11: return [2 /*return*/];
+                case 5: return [2 /*return*/];
             }
         });
     });

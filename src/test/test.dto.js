@@ -61,9 +61,9 @@ var CreateTestDto = exports.CreateTestDto = function () {
         }()),
         (function () {
             _transactionHash_decorators = [(0, class_validator_1.IsString)(), (0, class_validator_1.IsNotEmpty)()];
-            _tradeTime_decorators = [(0, class_validator_1.IsString)(), (0, class_validator_1.IsNotEmpty)()];
+            _tradeTime_decorators = [(0, class_validator_1.IsDateString)(), (0, class_validator_1.IsNotEmpty)()];
             _TransferFrom_decorators = [(0, class_validator_1.IsString)()];
-            _TransferTo_decorators = [(0, class_validator_1.IsDateString)()];
+            _TransferTo_decorators = [(0, class_validator_1.IsString)()];
             _TransferValue_decorators = [(0, class_validator_1.IsString)()];
             __esDecorate(null, null, _transactionHash_decorators, { kind: "field", name: "transactionHash", static: false, private: false, access: { has: function (obj) { return "transactionHash" in obj; }, get: function (obj) { return obj.transactionHash; }, set: function (obj, value) { obj.transactionHash = value; } } }, _transactionHash_initializers, _instanceExtraInitializers);
             __esDecorate(null, null, _tradeTime_decorators, { kind: "field", name: "tradeTime", static: false, private: false, access: { has: function (obj) { return "tradeTime" in obj; }, get: function (obj) { return obj.tradeTime; }, set: function (obj, value) { obj.tradeTime = value; } } }, _tradeTime_initializers, _instanceExtraInitializers);

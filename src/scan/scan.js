@@ -57,14 +57,14 @@ function getBlockInfo(startBlock, endBlock, testService) {
                     blockNumber = startBlock;
                     _d.label = 1;
                 case 1:
-                    if (!(blockNumber <= endBlock)) return [3 /*break*/, 11];
+                    if (!(blockNumber <= endBlock)) return [3 /*break*/, 8];
                     return [4 /*yield*/, web3.eth.getBlock(blockNumber, true)];
                 case 2:
                     block = _d.sent();
                     _i = 0, _a = block.transactions;
                     _d.label = 3;
                 case 3:
-                    if (!(_i < _a.length)) return [3 /*break*/, 10];
+                    if (!(_i < _a.length)) return [3 /*break*/, 7];
                     tx = _a[_i];
                     txHash = tx.hash;
                     tradeTime = new Date(Number(block.timestamp) * 1000);
@@ -77,34 +77,26 @@ function getBlockInfo(startBlock, endBlock, testService) {
                         })];
                 case 5:
                     transferEvents = _d.sent();
-                    _b = 0, _c = transferEvents;
+                    for (_b = 0, _c = transferEvents; _b < _c.length; _b++) {
+                        event_1 = _c[_b];
+                        createTestDto = {
+                            transactionHash: txHash,
+                            tradeTime: tradeTime.toISOString(),
+                            TransferFrom: event_1.returnValues.from,
+                            TransferTo: event_1.returnValues.to,
+                            TransferValue: event_1.returnValues.value.toString(),
+                        };
+                        console.log(createTestDto);
+                        // await testService.create(createTestDto);
+                    }
                     _d.label = 6;
                 case 6:
-                    if (!(_b < _c.length)) return [3 /*break*/, 9];
-                    event_1 = _c[_b];
-                    createTestDto = {
-                        transactionHash: txHash,
-                        tradeTime: tradeTime.toISOString(),
-                        TransferFrom: event_1.returnValues.from,
-                        TransferTo: event_1.returnValues.to,
-                        TransferValue: event_1.returnValues.value.toString(),
-                    };
-                    //   console.log(createTestDto);
-                    return [4 /*yield*/, testService.create(createTestDto)];
-                case 7:
-                    //   console.log(createTestDto);
-                    _d.sent();
-                    _d.label = 8;
-                case 8:
-                    _b++;
-                    return [3 /*break*/, 6];
-                case 9:
                     _i++;
                     return [3 /*break*/, 3];
-                case 10:
+                case 7:
                     blockNumber++;
                     return [3 /*break*/, 1];
-                case 11: return [2 /*return*/];
+                case 8: return [2 /*return*/];
             }
         });
     });
@@ -112,4 +104,4 @@ function getBlockInfo(startBlock, endBlock, testService) {
 var prisma = new client_1.PrismaClient(); // 创建 PrismaClient 实例
 var prismaService = new prisma_service_1.PrismaService(prisma); // 创建 PrismaService 实例
 var testService = new test_service_1.TestService(prismaService); // 将 PrismaService 实例传递给 TestService 构造函数
-getBlockInfo(1, 10, testService);
+getBlockInfo(1, 11, testService);

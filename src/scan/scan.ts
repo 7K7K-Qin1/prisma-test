@@ -32,8 +32,8 @@ import { PrismaService } from '../prisma.service';
             TransferTo: event.returnValues.to,
             TransferValue: event.returnValues.value.toString(),
           };
-        //   console.log(createTestDto);
-          await testService.create(createTestDto);
+          console.log(createTestDto);
+          // await testService.create(createTestDto);
         }
       }
     }
@@ -45,6 +45,6 @@ import { PrismaService } from '../prisma.service';
   const prisma = new PrismaClient(); // 创建 PrismaClient 实例
   const prismaService = new PrismaService(prisma); // 创建 PrismaService 实例
   const testService = new TestService(prismaService); // 将 PrismaService 实例传递给 TestService 构造函数
-  getBlockInfo(1, 10, testService);
+  getBlockInfo(1, 11, testService);
   
   

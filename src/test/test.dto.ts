@@ -5,17 +5,17 @@ export class CreateTestDto {
   @IsNotEmpty()
   transactionHash: string;
 
-  @IsString()
+  @IsDateString()
   @IsNotEmpty()
   tradeTime: string;
 
   @IsString()
-  TransferFrom: string;
-
-  @IsDateString()
-  TransferTo: string;
+  TransferFrom?: string | null;
 
   @IsString()
-  TransferValue: string;
+  TransferTo?: string | null;
+
+  @IsString()
+  TransferValue?: string | null;
 
 }
